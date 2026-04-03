@@ -70,15 +70,60 @@ body {
 
 <!-- SCRIPT -->
 <script>
-fetch("https://docs.google.com/spreadsheets/d/1dH_Xp8FqChqxdRl0Jdrnbtc4db3UoyK5vp6hWHVwOCo/gviz/tq?tqx=out:csv")
+const url = "https://docs.google.com/spreadsheets/d/1dH_Xp8FqChqxdRl0Jdrnbtc4db3UoyK5vp6hWHVwOCo/gviz/tq?tqx=out:csv";
+
+fetch(url)
 .then(res => res.text())
 .then(data => {
 
-    console.log("DADOS:", data);
-
+    const linhas = data.split("\n").slice(1);
     const container = document.getElementById("lista-imoveis");
 
-    container.innerHTML = "<pre>" + data + "</pre>";
+    container.innerHTML = "";
+
+    linhas.forEach(linha => {
+
+        if (!linha) return;
+
+        // separa corretamente CSV com aspas
+        const col = linha.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+
+        if (!col) return;
+
+        const limpar = (t) => t ? t.replace(/"/g, "").trim() : "";
+
+        const titulo = limpar(col[0]);
+        const preco = limpar(col[1]);
+        const cidade = limpar(col[2]);
+        const bairro = limpar(col[3]);
+        const metragem = limpar(col[4]);
+        const status = limpar(col[7]);
+        const imagem = limpar(col[8]);
+
+        if (status && status.toLowerCase() === "disponivel") {
+
+            const mensagem = `Tenho interesse no imóvel: ${titulo} em ${bairro}`;
+
+            const card = `
+                <div class="bg-[#111] p-4 rounded-lg border border-gray-800">
+                    <img src="${imagem || 'https://via.placeholder.com/300'}" class="w-full h-48 object-cover rounded mb-4">
+                    <h3 class="font-bold text-lg">${titulo}</h3>
+                    <p class="text-gray-400">${bairro} - ${cidade}</p>
+                    <p class="text-gray-400">${metragem} m²</p>
+                    <p class="text-[#ff4d00] font-bold text-xl mt-2">${preco}</p>
+
+                    <a target="_blank"
+                       href="https://wa.me/5584987755048?text=${encodeURIComponent(mensagem)}"
+                       class="block text-center bg-[#ff4d00] mt-4 p-3 rounded font-bold">
+                       Tenho interesse
+                    </a>
+                </div>
+            `;
+
+            container.innerHTML += card;
+        }
+
+    });
 
 });
 </script>
