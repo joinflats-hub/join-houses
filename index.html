@@ -70,53 +70,15 @@ body {
 
 <!-- SCRIPT -->
 <script>
-const url = "https://docs.google.com/spreadsheets/d/1dH_Xp8FqChqxdRl0Jdrnbtc4db3UoyK5vp6hWHVwOCo/gviz/tq?tqx=out:csv";
-
-fetch(url)
+fetch("https://docs.google.com/spreadsheets/d/1dH_Xp8FqChqxdRl0Jdrnbtc4db3UoyK5vp6hWHVwOCo/gviz/tq?tqx=out:csv")
 .then(res => res.text())
 .then(data => {
 
-    const linhas = data.split("\n").slice(1);
+    console.log("DADOS:", data);
+
     const container = document.getElementById("lista-imoveis");
 
-    container.innerHTML = "";
-
-    linhas.forEach(linha => {
-
-        const col = linha.split(",");
-
-        const titulo = col[0];
-        const preco = col[1];
-        const cidade = col[2];
-        const bairro = col[3];
-        const metragem = col[4];
-        const status = col[7];
-        const imagem = col[8];
-
-        if (status && status.trim().toLowerCase() === "disponivel") {
-
-            const mensagem = `Tenho interesse no imóvel: ${titulo} em ${bairro}`;
-
-            const card = `
-                <div class="bg-[#111] p-4 rounded-lg border border-gray-800">
-                    <img src="${imagem}" class="w-full h-48 object-cover rounded mb-4">
-                    <h3 class="font-bold text-lg">${titulo}</h3>
-                    <p class="text-gray-400">${bairro} - ${cidade}</p>
-                    <p class="text-gray-400">${metragem} m²</p>
-                    <p class="text-[#ff4d00] font-bold text-xl mt-2">R$ ${preco}</p>
-
-                    <a target="_blank"
-                       href="https://wa.me/5584987755048?text=${encodeURIComponent(mensagem)}"
-                       class="block text-center bg-[#ff4d00] mt-4 p-3 rounded font-bold">
-                       Tenho interesse
-                    </a>
-                </div>
-            `;
-
-            container.innerHTML += card;
-        }
-
-    });
+    container.innerHTML = "<pre>" + data + "</pre>";
 
 });
 </script>
