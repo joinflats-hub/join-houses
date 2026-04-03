@@ -114,6 +114,9 @@ nav a {
 <section class="section" id="imoveis">
     <h2 style="color:#ff4d00;">Imóveis Disponíveis</h2>
 
+    <div class="cards" id="lista-imoveis"></div>
+</section>
+
     <div class="cards">
         <div class="card">
             <img src="https://via.placeholder.com/300x200">
@@ -164,6 +167,53 @@ nav a {
 <div class="whatsapp">
     <a href="https://wa.me/5584987755048" target="_blank">💬</a>
 </div>
+<script>
+const url = "https://docs.google.com/spreadsheets/d/1dH_Xp8FqChqxdRl0Jdrnbtc4db3UoyK5vp6hWHVwOCo/pub?output=csv";
 
+fetch(url)
+  .then(response => response.text())
+  .then(data => {
+    const linhas = data.split("\n").slice(1);
+    const container = document.getElementById("lista-imoveis");
+
+    container.innerHTML = "";
+
+    linhas.forEach(linha => {
+      const colunas = linha.split(",");
+
+      const titulo = colunas[0];
+      const preco = colunas[1];
+      const cidade = colunas[2];
+      const bairro = colunas[3];
+      const metragem = colunas[4];
+      const disponivel = colunas[5];
+      const tipo = colunas[6];
+      const status = colunas[7];
+      const imagem = colunas[8];
+
+      if (status && status.trim().toLowerCase() === "disponivel") {
+
+        const mensagem = `Tenho interesse no imóvel: ${titulo} em ${bairro}`;
+
+        const card = `
+          <div class="card">
+            <img src="${imagem}" />
+            <h3>${titulo}</h3>
+            <p>${tipo} • ${bairro} - ${cidade}</p>
+            <p>${metragem} m²</p>
+            <p><strong>R$ ${preco}</strong></p>
+            <a class="btn" target="_blank"
+               href="https://wa.me/5584987755048?text=${encodeURIComponent(mensagem)}">
+               Tenho interesse
+            </a>
+          </div>
+        `;
+
+        container.innerHTML += card;
+      }
+    });
+  });
+</script>
+    
 </body>
 </html>
